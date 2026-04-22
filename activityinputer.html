@@ -24,93 +24,64 @@
   <style>
     * { font-family: 'Raleway', sans-serif; }
     :root { --primary:#2d6a4f; --primary-light:#40916c; --primary-dark:#1b4332; --accent:#52b788; }
-
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: #f0f7f4; }
     ::-webkit-scrollbar-thumb { background: #b8ddd0; border-radius: 99px; }
-
-    /* Pages */
-    .page { display: none; opacity: 0; transform: translateY(6px); transition: opacity .18s ease, transform .18s ease; }
-    .page.active { display: flex; flex-direction: column; opacity: 1; transform: translateY(0); }
-
-    /* Sidebar */
-    .nav-item { position: relative; transition: all .15s ease; }
-    .nav-item.active { background: rgba(82,183,136,.15); }
+    .page { display:none; opacity:0; transform:translateY(6px); transition:opacity .18s ease,transform .18s ease; }
+    .page.active { display:flex; flex-direction:column; opacity:1; transform:translateY(0); }
+    .nav-item { position:relative; transition:all .15s ease; }
+    .nav-item.active { background:rgba(82,183,136,.15); }
     .nav-item.active::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:3px; height:60%; background:#52b788; border-radius:0 3px 3px 0; }
-
-    /* Mobile sidebar drawer */
-    #sidebar {
-      position: fixed; left: 0; top: 0; bottom: 0; z-index: 40;
-      transform: translateX(-100%);
-      transition: transform .25s ease;
-      width: 240px;
+    #sidebar { position:fixed; left:0; top:0; bottom:0; z-index:40; transform:translateX(-100%); transition:transform .25s ease; width:240px; }
+    #sidebar.open { transform:translateX(0); }
+    @media(min-width:768px){
+      #sidebar { position:relative; transform:none !important; width:224px; flex-shrink:0; }
+      #sidebar-overlay { display:none !important; }
+      #hamburger { display:none !important; }
     }
-    #sidebar.open { transform: translateX(0); }
-
-    /* Desktop: sidebar always visible */
-    @media (min-width: 768px) {
-      #sidebar { position: relative; transform: none !important; width: 224px; flex-shrink: 0; }
-      #sidebar-overlay { display: none !important; }
-      #hamburger { display: none !important; }
-    }
-
-    /* Sidebar overlay */
-    #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 39; }
-    #sidebar-overlay.show { display: block; }
-
-    /* Modal */
-    .modal-backdrop { animation: fadeIn .15s ease; }
-    .modal-box { animation: slideUp .18s ease; }
+    #sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:39; }
+    #sidebar-overlay.show { display:block; }
+    .modal-backdrop { animation:fadeIn .15s ease; }
+    .modal-box { animation:slideUp .18s ease; }
     @keyframes fadeIn { from{opacity:0} to{opacity:1} }
     @keyframes slideUp { from{opacity:0;transform:translateY(12px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
-
-    /* Cards */
-    .task-card { transition: box-shadow .15s, transform .15s; }
-    .task-card:hover { box-shadow: 0 4px 20px rgba(45,106,79,.1); transform: translateY(-1px); }
-
-    .stripe-green { border-left: 3px solid #2d6a4f; }
-    .stripe-teal  { border-left: 3px solid #52b788; }
-    .stripe-sage  { border-left: 3px solid #40916c; }
-
+    .task-card { transition:box-shadow .15s,transform .15s; }
+    .task-card:hover { box-shadow:0 4px 20px rgba(45,106,79,.1); transform:translateY(-1px); }
+    .stripe-green { border-left:3px solid #2d6a4f; }
+    .stripe-teal  { border-left:3px solid #52b788; }
+    .stripe-sage  { border-left:3px solid #40916c; }
     .badge { display:inline-flex; align-items:center; font-size:11px; font-weight:600; letter-spacing:.02em; padding:2px 8px; border-radius:99px; }
-
     input:focus, textarea:focus, select:focus { outline:none; border-color:var(--primary-light) !important; box-shadow:0 0 0 3px rgba(64,145,108,.12); }
-
-    .cust-row { transition: background .1s; }
-    .cust-row:hover { background: #f0f7f4; }
-
-    .toast { animation: toastIn .2s ease; }
+    .cust-row { transition:background .1s; }
+    .cust-row:hover { background:#f0f7f4; }
+    .toast { animation:toastIn .2s ease; }
     @keyframes toastIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
-
     .av-0{background:#1b4332} .av-1{background:#2d6a4f} .av-2{background:#40916c} .av-3{background:#52b788} .av-4{background:#235440}
-
     .stagger>*{ opacity:0; animation:fadeIn .2s ease forwards; }
     .stagger>*:nth-child(1){animation-delay:.03s} .stagger>*:nth-child(2){animation-delay:.07s}
     .stagger>*:nth-child(3){animation-delay:.11s} .stagger>*:nth-child(4){animation-delay:.15s}
     .stagger>*:nth-child(5){animation-delay:.19s} .stagger>*:nth-child(n+6){animation-delay:.22s}
-
-    /* CRM Checkbox custom */
-    .crm-checkbox { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; border: 2px solid #b8ddd0; border-radius: 4px; cursor: pointer; flex-shrink: 0; transition: all .15s; position: relative; background: #fff; }
-    .crm-checkbox:checked { background: #2d6a4f; border-color: #2d6a4f; }
-    .crm-checkbox:checked::after { content: ''; position: absolute; left: 3px; top: 0px; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg); }
-    .crm-checkbox:hover { border-color: #2d6a4f; }
-
-    /* CRM done state on card */
-    .crm-done-bar { background: #dcfce7; border-color: #86efac; }
-    .crm-done-bar .crm-label { color: #166534; }
-
-    /* Responsive table scroll */
-    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    /* CRM */
+    .crm-checkbox { appearance:none; -webkit-appearance:none; width:16px; height:16px; border:2px solid #b8ddd0; border-radius:4px; cursor:pointer; flex-shrink:0; transition:all .15s; position:relative; background:#fff; }
+    .crm-checkbox:checked { background:#2d6a4f; border-color:#2d6a4f; }
+    .crm-checkbox:checked::after { content:''; position:absolute; left:3px; top:0px; width:5px; height:9px; border:2px solid white; border-top:none; border-left:none; transform:rotate(45deg); }
+    .crm-checkbox:hover { border-color:#2d6a4f; }
+    .crm-done-bar { background:#dcfce7; }
+    /* Import */
+    .drop-zone { border:2px dashed #b8ddd0; transition:all .2s ease; }
+    .drop-zone.drag-over { border-color:#2d6a4f; background:#f0f7f4; }
+    .drop-zone:hover { border-color:#87b4a0; background:#f8faf9; }
+    .prev-new  { background:#f0fdf4; }
+    .prev-dup  { background:#fefce8; }
+    .prev-err  { background:#fef2f2; }
   </style>
 </head>
 <body class="bg-forest-50 text-forest-900 h-screen overflow-hidden flex">
 
-<!-- ── SIDEBAR OVERLAY (mobile) ───────────────────────── -->
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
-<!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
+<!-- ═══════ SIDEBAR ═══════ -->
 <aside id="sidebar" class="bg-forest-800 flex flex-col h-screen select-none">
-
   <div class="px-6 pt-7 pb-5 border-b border-forest-700/60 flex items-center justify-between">
     <div>
       <div class="flex items-center gap-2.5">
@@ -119,7 +90,6 @@
       </div>
       <p class="text-sage-400 text-[10px] font-semibold tracking-widest mt-3 uppercase">Workspace</p>
     </div>
-    <!-- Close btn mobile -->
     <button onclick="closeSidebar()" class="md:hidden text-sage-400 hover:text-white p-1">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
@@ -128,29 +98,28 @@
   <nav class="flex-1 px-3 py-4 space-y-1">
     <button onclick="navigate('tasks')" id="nav-tasks"
       class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sage-300 text-sm font-semibold hover:bg-white/10 hover:text-white">
-      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-      </svg>
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
       Daily Tasks
     </button>
     <button onclick="navigate('customers')" id="nav-customers"
       class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sage-400 text-sm font-semibold hover:bg-white/10 hover:text-white">
-      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-      </svg>
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       Customers
+    </button>
+    <button onclick="navigate('import')" id="nav-import"
+      class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sage-400 text-sm font-semibold hover:bg-white/10 hover:text-white">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Import Data
     </button>
   </nav>
 
   <div class="px-3 pb-3">
     <p class="text-sage-600 text-[10px] font-bold tracking-widest uppercase px-3 pb-2">Aplikasi Lain</p>
-    <a href="https://mfw-sys.github.io/forreminderslaandpm/doctrack"
-      class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sage-500 text-sm font-semibold hover:bg-white/10 hover:text-white transition-colors">
+    <a href="https://mfw-sys.github.io/forreminderslaandpm/doctrack" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sage-500 text-sm font-semibold hover:bg-white/10 hover:text-white transition-colors">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
       DocTrack
     </a>
-    <a href="https://mfw-sys.github.io/forterminationdata/termination"
-      class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sage-500 text-sm font-semibold hover:bg-white/10 hover:text-white transition-colors">
+    <a href="https://mfw-sys.github.io/forterminationdata/termination" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sage-500 text-sm font-semibold hover:bg-white/10 hover:text-white transition-colors">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
       Termination Data
     </a>
@@ -162,15 +131,12 @@
   </div>
 </aside>
 
-<!-- ═══════════════════════ MAIN CONTENT ═══════════════════════ -->
+<!-- ═══════ MAIN ═══════ -->
 <main class="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
 
-  <!-- ── MOBILE TOPBAR (hamburger) ── -->
   <div id="hamburger" class="bg-forest-800 flex items-center gap-3 px-4 py-3 flex-shrink-0">
     <button onclick="openSidebar()" class="text-white p-1 -ml-1">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path d="M4 6h16M4 12h16M4 18h16"/>
-      </svg>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
     <div class="flex items-center gap-2">
       <div class="w-1.5 h-1.5 rounded-full bg-forest-400"></div>
@@ -178,51 +144,37 @@
     </div>
   </div>
 
-  <!-- ─── TASKS PAGE ─── -->
+  <!-- TASKS PAGE -->
   <section id="page-tasks" class="page active flex-col h-full overflow-hidden">
-
     <div class="bg-white border-b border-sage-200 px-4 md:px-7 py-4 flex items-center justify-between flex-shrink-0 gap-3">
       <div class="min-w-0">
         <h1 class="text-lg md:text-xl font-black text-forest-800 tracking-tight">Daily Tasks</h1>
         <p id="tasks-subtitle" class="text-xs text-sage-500 mt-0.5 font-medium hidden md:block"></p>
       </div>
       <div class="flex items-center gap-2 flex-shrink-0">
-        <button onclick="exportJSON('tasks')"
-          class="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg border border-sage-200 bg-sage-50 text-forest-700 text-sm font-semibold hover:bg-sage-100 transition-colors">
+        <button onclick="exportJSON('tasks')" class="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg border border-sage-200 bg-sage-50 text-forest-700 text-sm font-semibold hover:bg-sage-100 transition-colors">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          <span class="hidden md:inline">Export JSON</span>
-          <span class="sm:inline md:hidden">Export</span>
+          <span class="hidden md:inline">Export JSON</span><span class="sm:inline md:hidden">Export</span>
         </button>
-        <button onclick="openTaskModal()"
-          class="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
+        <button onclick="openTaskModal()" class="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
           <span class="hidden sm:inline">New Task</span>
         </button>
       </div>
     </div>
-
-    <!-- Filter bar -->
     <div class="bg-white border-b border-sage-200 px-4 md:px-7 py-3 flex flex-wrap items-center gap-2 md:gap-4 flex-shrink-0">
       <div class="relative w-full sm:w-auto sm:flex-1 sm:max-w-xs">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-sage-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/></svg>
-        <input id="task-search" type="text" placeholder="Cari customer atau deskripsi..."
-          oninput="renderTasks()"
-          class="w-full pl-9 pr-3 py-2 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 placeholder-sage-400 font-medium" />
+        <input id="task-search" type="text" placeholder="Cari customer atau deskripsi..." oninput="renderTasks()" class="w-full pl-9 pr-3 py-2 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 placeholder-sage-400 font-medium" />
       </div>
       <div class="flex items-center gap-2 w-full sm:w-auto">
-        <input id="filter-date-start" type="date" onchange="renderTasks()"
-          class="flex-1 sm:flex-none px-2 md:px-3 py-2 text-xs md:text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-700 font-medium" />
+        <input id="filter-date-start" type="date" onchange="renderTasks()" class="flex-1 sm:flex-none px-2 md:px-3 py-2 text-xs md:text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-700 font-medium" />
         <span class="text-sage-400 text-xs font-semibold">—</span>
-        <input id="filter-date-end" type="date" onchange="renderTasks()"
-          class="flex-1 sm:flex-none px-2 md:px-3 py-2 text-xs md:text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-700 font-medium" />
+        <input id="filter-date-end" type="date" onchange="renderTasks()" class="flex-1 sm:flex-none px-2 md:px-3 py-2 text-xs md:text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-700 font-medium" />
         <button onclick="clearDateFilter()" class="text-xs text-sage-500 hover:text-forest-600 font-semibold transition-colors whitespace-nowrap">Reset</button>
       </div>
-      <div class="ml-auto">
-        <span id="task-count" class="badge bg-forest-100 text-forest-700">0 tasks</span>
-      </div>
+      <div class="ml-auto"><span id="task-count" class="badge bg-forest-100 text-forest-700">0 tasks</span></div>
     </div>
-
-    <!-- Task list -->
     <div class="flex-1 overflow-y-auto px-3 md:px-7 py-4 md:py-5">
       <div id="task-list" class="space-y-3 stagger"></div>
       <div id="task-empty" class="hidden flex-col items-center justify-center h-full text-center py-24">
@@ -235,42 +187,33 @@
     </div>
   </section>
 
-  <!-- ─── CUSTOMERS PAGE ─── -->
+  <!-- CUSTOMERS PAGE -->
   <section id="page-customers" class="page flex-col h-full overflow-hidden">
-
     <div class="bg-white border-b border-sage-200 px-4 md:px-7 py-4 flex items-center justify-between flex-shrink-0 gap-3">
       <div class="min-w-0">
         <h1 class="text-lg md:text-xl font-black text-forest-800 tracking-tight">Customer Database</h1>
         <p id="customers-subtitle" class="text-xs text-sage-500 mt-0.5 font-medium hidden md:block"></p>
       </div>
       <div class="flex items-center gap-2 flex-shrink-0">
-        <button onclick="exportJSON('customers')"
-          class="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg border border-sage-200 bg-sage-50 text-forest-700 text-sm font-semibold hover:bg-sage-100 transition-colors">
+        <button onclick="exportJSON('customers')" class="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg border border-sage-200 bg-sage-50 text-forest-700 text-sm font-semibold hover:bg-sage-100 transition-colors">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          <span class="hidden md:inline">Export JSON</span>
-          <span class="sm:inline md:hidden">Export</span>
+          <span class="hidden md:inline">Export JSON</span><span class="sm:inline md:hidden">Export</span>
         </button>
-        <button onclick="openCustomerModal()"
-          class="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
+        <button onclick="openCustomerModal()" class="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
           <span class="hidden sm:inline">Add Customer</span>
         </button>
       </div>
     </div>
-
     <div class="bg-white border-b border-sage-200 px-4 md:px-7 py-3 flex items-center gap-3 flex-shrink-0">
       <div class="relative flex-1 max-w-xs">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-sage-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/></svg>
-        <input id="cust-search" type="text" placeholder="Cari customer..."
-          oninput="renderCustomers()"
-          class="w-full pl-9 pr-3 py-2 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 placeholder-sage-400 font-medium" />
+        <input id="cust-search" type="text" placeholder="Cari customer..." oninput="renderCustomers()" class="w-full pl-9 pr-3 py-2 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 placeholder-sage-400 font-medium" />
       </div>
       <div class="ml-auto"><span id="cust-count" class="badge bg-forest-100 text-forest-700">0 customers</span></div>
     </div>
-
     <div class="flex-1 overflow-y-auto px-3 md:px-7 py-4 md:py-5">
       <div class="bg-white rounded-xl border border-sage-200 overflow-hidden shadow-sm">
-        <!-- Desktop header -->
         <div class="hidden md:grid grid-cols-12 bg-sage-50 border-b border-sage-200 px-5 py-3">
           <div class="col-span-4 text-[10px] font-bold text-sage-500 uppercase tracking-widest">Nama Customer</div>
           <div class="col-span-3 text-[10px] font-bold text-sage-500 uppercase tracking-widest">Email</div>
@@ -279,9 +222,6 @@
         </div>
         <div id="cust-table-body"></div>
         <div id="cust-empty" class="hidden py-16 text-center">
-          <div class="w-12 h-12 rounded-2xl bg-forest-100 flex items-center justify-center mb-3 mx-auto">
-            <svg class="w-6 h-6 text-forest-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-          </div>
           <p class="text-forest-700 font-bold text-sm">Belum ada customer</p>
           <p class="text-sage-500 text-xs mt-1 font-medium">Klik <span class="text-forest-600">+ Add Customer</span> untuk memulai</p>
         </div>
@@ -289,25 +229,122 @@
     </div>
   </section>
 
+  <!-- IMPORT PAGE -->
+  <section id="page-import" class="page flex-col h-full overflow-hidden">
+    <div class="bg-white border-b border-sage-200 px-4 md:px-7 py-4 flex-shrink-0">
+      <h1 class="text-lg md:text-xl font-black text-forest-800 tracking-tight">Import Data</h1>
+      <p class="text-xs text-sage-500 mt-0.5 font-medium">Impor data dari file JSON yang sebelumnya di-export — duplikat otomatis dilewati</p>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-4 md:px-7 py-5 space-y-5">
+
+      <!-- Import Customers -->
+      <div class="bg-white rounded-xl border border-sage-200 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-sage-100">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-forest-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-forest-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-black text-forest-800">Import Customers</p>
+              <p class="text-xs text-sage-500 font-medium mt-0.5">File: <code class="bg-sage-100 px-1.5 py-0.5 rounded text-[11px] text-forest-700 font-bold">customers_*.json</code></p>
+            </div>
+          </div>
+          <label class="flex items-center gap-2 px-4 py-2 rounded-lg bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 transition-colors cursor-pointer shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Pilih File
+            <input type="file" accept=".json" class="hidden" onchange="handleFile(this,'customers')" />
+          </label>
+        </div>
+
+        <!-- Drop zone customers -->
+        <div class="px-5 pt-4 pb-2">
+          <div id="dz-customers" class="drop-zone rounded-xl p-8 text-center cursor-pointer"
+            ondragover="dzOver(event,'customers')" ondragleave="dzLeave(event,'customers')" ondrop="dzDrop(event,'customers')">
+            <svg class="w-10 h-10 text-sage-300 mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <p class="text-sage-500 text-sm font-semibold">Drop file JSON di sini</p>
+            <p class="text-sage-400 text-xs mt-1">atau gunakan tombol <span class="font-bold text-forest-600">Pilih File</span> di atas</p>
+          </div>
+        </div>
+        <div id="prev-customers" class="hidden px-5 pb-5"></div>
+      </div>
+
+      <!-- Import Tasks -->
+      <div class="bg-white rounded-xl border border-sage-200 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-sage-100">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-forest-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-forest-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-black text-forest-800">Import Daily Tasks</p>
+              <p class="text-xs text-sage-500 font-medium mt-0.5">File: <code class="bg-sage-100 px-1.5 py-0.5 rounded text-[11px] text-forest-700 font-bold">tasks_*.json</code></p>
+            </div>
+          </div>
+          <label class="flex items-center gap-2 px-4 py-2 rounded-lg bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 transition-colors cursor-pointer shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Pilih File
+            <input type="file" accept=".json" class="hidden" onchange="handleFile(this,'tasks')" />
+          </label>
+        </div>
+
+        <div class="px-5 pt-4 pb-2">
+          <div id="dz-tasks" class="drop-zone rounded-xl p-8 text-center cursor-pointer"
+            ondragover="dzOver(event,'tasks')" ondragleave="dzLeave(event,'tasks')" ondrop="dzDrop(event,'tasks')">
+            <svg class="w-10 h-10 text-sage-300 mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <p class="text-sage-500 text-sm font-semibold">Drop file JSON di sini</p>
+            <p class="text-sage-400 text-xs mt-1">atau gunakan tombol <span class="font-bold text-forest-600">Pilih File</span> di atas</p>
+          </div>
+        </div>
+        <div id="prev-tasks" class="hidden px-5 pb-5"></div>
+      </div>
+
+      <!-- Format reference -->
+      <div class="bg-white rounded-xl border border-sage-200 shadow-sm p-5">
+        <p class="text-[10px] font-black text-sage-500 uppercase tracking-widest mb-4">Format JSON yang Didukung</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs font-bold text-forest-700 mb-2">📁 customers_*.json</p>
+            <pre class="bg-forest-50 rounded-lg p-3 text-xs text-forest-800 overflow-x-auto leading-relaxed font-mono">[
+  {
+    "name": "PT. Contoh",
+    "email": "info@contoh.com",
+    "phone": "+62 21 1234"
+  }
+]</pre>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-forest-700 mb-2">📁 tasks_*.json</p>
+            <pre class="bg-forest-50 rounded-lg p-3 text-xs text-forest-800 overflow-x-auto leading-relaxed font-mono">[
+  {
+    "customer": "PT. Contoh",
+    "date_start": "2025-01-01",
+    "date_end": "2025-01-31",
+    "description": "Deskripsi task"
+  }
+]</pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
 </main>
 
-<!-- ═══════════════════════ MODAL: TASK ═══════════════════════ -->
+<!-- MODAL TASK -->
 <div id="task-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
   <div class="modal-backdrop absolute inset-0 bg-forest-900/40 backdrop-blur-sm" onclick="closeTaskModal()"></div>
   <div class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
     <div class="bg-forest-700 px-5 md:px-7 py-4 md:py-5 flex items-center justify-between">
       <h2 id="task-modal-title" class="text-white font-black text-base tracking-tight">New Task</h2>
-      <button onclick="closeTaskModal()" class="text-forest-300 hover:text-white transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+      <button onclick="closeTaskModal()" class="text-forest-300 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="px-5 md:px-7 py-5 md:py-6 space-y-4">
       <input type="hidden" id="task-id" />
       <div>
         <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-widest mb-1.5">Customer</label>
-        <select id="task-customer" class="w-full px-3 py-2.5 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 font-semibold">
-          <option value="">— Pilih Customer —</option>
-        </select>
+        <select id="task-customer" class="w-full px-3 py-2.5 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 font-semibold"><option value="">— Pilih Customer —</option></select>
       </div>
       <div class="grid grid-cols-2 gap-3 md:gap-4">
         <div>
@@ -321,8 +358,7 @@
       </div>
       <div>
         <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-widest mb-1.5">Deskripsi</label>
-        <textarea id="task-description" rows="4" placeholder="Jelaskan pekerjaan yang dilakukan..."
-          class="w-full px-3 py-2.5 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 placeholder-sage-400 font-medium resize-none leading-relaxed"></textarea>
+        <textarea id="task-description" rows="4" placeholder="Jelaskan pekerjaan yang dilakukan..." class="w-full px-3 py-2.5 text-sm border border-sage-200 rounded-lg bg-forest-50 text-forest-800 placeholder-sage-400 font-medium resize-none leading-relaxed"></textarea>
       </div>
     </div>
     <div class="px-5 md:px-7 pb-5 md:pb-6 flex justify-end gap-2.5">
@@ -332,15 +368,13 @@
   </div>
 </div>
 
-<!-- ═══════════════════════ MODAL: CUSTOMER ═══════════════════════ -->
+<!-- MODAL CUSTOMER -->
 <div id="cust-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
   <div class="modal-backdrop absolute inset-0 bg-forest-900/40 backdrop-blur-sm" onclick="closeCustomerModal()"></div>
   <div class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
     <div class="bg-forest-800 px-5 md:px-7 py-4 md:py-5 flex items-center justify-between">
       <h2 id="cust-modal-title" class="text-white font-black text-base tracking-tight">New Customer</h2>
-      <button onclick="closeCustomerModal()" class="text-forest-300 hover:text-white transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+      <button onclick="closeCustomerModal()" class="text-forest-300 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="px-5 md:px-7 py-5 md:py-6 space-y-4">
       <input type="hidden" id="cust-id" />
@@ -383,157 +417,97 @@
   </div>
 </div>
 
-<!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
 <script>
 // ─── Storage ──────────────────────────────────────────────────────────────────
-const DB = {
-  get(k)    { try { return JSON.parse(localStorage.getItem(k)||'[]'); } catch { return []; } },
-  set(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-};
+const DB={get(k){try{return JSON.parse(localStorage.getItem(k)||'[]');}catch{return[];}},set(k,v){localStorage.setItem(k,JSON.stringify(v));}};
+let tasks=DB.get('dt_tasks'), customers=DB.get('dt_customers');
+function saveTasks(){DB.set('dt_tasks',tasks);} function saveCustomers(){DB.set('dt_customers',customers);}
 
-let tasks     = DB.get('dt_tasks');
-let customers = DB.get('dt_customers');
-
-function saveTasks()     { DB.set('dt_tasks', tasks); }
-function saveCustomers() { DB.set('dt_customers', customers); }
-
-// ─── Sidebar (mobile) ────────────────────────────────────────────────────────
-function openSidebar() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sidebar-overlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('show');
-  document.body.style.overflow = '';
-}
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('show');document.body.style.overflow='hidden';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('show');document.body.style.overflow='';}
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
-let currentPage = 'tasks';
-function navigate(page) {
+let currentPage='tasks';
+function navigate(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>{ n.classList.remove('active'); n.classList.add('text-sage-400'); n.classList.remove('text-white'); });
+  document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active');n.classList.add('text-sage-400');n.classList.remove('text-white','text-sage-300');});
   document.getElementById(`page-${page}`).classList.add('active');
-  const nav = document.getElementById(`nav-${page}`);
-  nav.classList.add('active'); nav.classList.remove('text-sage-400'); nav.classList.add('text-white');
-  currentPage = page;
-  if (page==='tasks')     renderTasks();
-  if (page==='customers') renderCustomers();
+  const nav=document.getElementById(`nav-${page}`);
+  nav.classList.add('active','text-white');nav.classList.remove('text-sage-400');
+  currentPage=page;
+  if(page==='tasks')     renderTasks();
+  if(page==='customers') renderCustomers();
+  if(page==='import')    resetImport();
   closeSidebar();
 }
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
-function uid()       { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
-function initials(n) { return (n||'').split(' ').slice(0,2).map(w=>w[0]?.toUpperCase()||'').join(''); }
-function avClass(i)  { return ['av-0','av-1','av-2','av-3','av-4'][i%5]; }
-function stripeClass(i) { return ['stripe-green','stripe-teal','stripe-sage'][i%3]; }
-
-function fmtDate(d) {
-  if (!d) return '—';
-  const [y,m,dd] = d.split('-');
-  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-  return `${parseInt(dd)} ${months[parseInt(m)-1]} ${y}`;
-}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function initials(n){return(n||'').split(' ').slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');}
+function avClass(i){return['av-0','av-1','av-2','av-3','av-4'][i%5];}
+function stripeClass(i){return['stripe-green','stripe-teal','stripe-sage'][i%3];}
+function fmtDate(d){if(!d)return'—';const[y,m,dd]=d.split('-');const mn=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];return`${parseInt(dd)} ${mn[parseInt(m)-1]} ${y}`;}
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
-function toast(msg, type='success') {
-  const el = document.createElement('div');
-  const colors = { success:'bg-forest-700', error:'bg-red-500', info:'bg-forest-500' };
-  el.className = `toast pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl ${colors[type]} text-white text-sm font-semibold shadow-lg max-w-xs`;
-  el.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span><span>${msg}</span>`;
+function toast(msg,type='success'){
+  const el=document.createElement('div');
+  const c={success:'bg-forest-700',error:'bg-red-500',info:'bg-forest-500'};
+  el.className=`toast pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl ${c[type]} text-white text-sm font-semibold shadow-lg max-w-xs`;
+  el.innerHTML=`<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span><span>${msg}</span>`;
   document.getElementById('toast-container').appendChild(el);
-  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); },2800);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2800);
 }
 
 // ─── Confirm ──────────────────────────────────────────────────────────────────
-let confirmCb = null;
-function showConfirm(title, desc, cb) {
-  document.getElementById('confirm-title').textContent = title;
-  document.getElementById('confirm-desc').textContent  = desc;
-  confirmCb = cb;
-  document.getElementById('confirm-dialog').classList.remove('hidden');
-}
-function closeConfirm() { document.getElementById('confirm-dialog').classList.add('hidden'); confirmCb=null; }
-document.getElementById('confirm-ok').onclick = ()=>{ if(confirmCb) confirmCb(); closeConfirm(); };
+let confirmCb=null;
+function showConfirm(t,d,cb){document.getElementById('confirm-title').textContent=t;document.getElementById('confirm-desc').textContent=d;confirmCb=cb;document.getElementById('confirm-dialog').classList.remove('hidden');}
+function closeConfirm(){document.getElementById('confirm-dialog').classList.add('hidden');confirmCb=null;}
+document.getElementById('confirm-ok').onclick=()=>{if(confirmCb)confirmCb();closeConfirm();};
 
 // ─── Sidebar stats ────────────────────────────────────────────────────────────
-function updateSidebarStats() {
-  const today  = new Date().toISOString().split('T')[0];
-  const active = tasks.filter(t=>t.date_start<=today&&t.date_end>=today).length;
-  const crmDone= tasks.filter(t=>t.crm_done).length;
-  document.getElementById('sidebar-stats').innerHTML = `
+function updateSidebarStats(){
+  const today=new Date().toISOString().split('T')[0];
+  const active=tasks.filter(t=>t.date_start<=today&&t.date_end>=today).length;
+  const crmDone=tasks.filter(t=>t.crm_done).length;
+  document.getElementById('sidebar-stats').innerHTML=`
     <div class="flex justify-between items-center"><span class="text-sage-500 text-[10px] font-medium">Total Task</span><span class="text-forest-300 text-[10px] font-bold">${tasks.length}</span></div>
     <div class="flex justify-between items-center"><span class="text-sage-500 text-[10px] font-medium">Customers</span><span class="text-forest-300 text-[10px] font-bold">${customers.length}</span></div>
     <div class="flex justify-between items-center"><span class="text-sage-500 text-[10px] font-medium">Aktif Hari Ini</span><span class="text-forest-400 text-[10px] font-bold">${active}</span></div>
-    <div class="flex justify-between items-center"><span class="text-sage-500 text-[10px] font-medium">CRM Done</span><span class="text-forest-400 text-[10px] font-bold">${crmDone}/${tasks.length}</span></div>
-  `;
+    <div class="flex justify-between items-center"><span class="text-sage-500 text-[10px] font-medium">CRM Done</span><span class="text-forest-400 text-[10px] font-bold">${crmDone}/${tasks.length}</span></div>`;
 }
 
-// ─── CRM Toggle ───────────────────────────────────────────────────────────────
-function toggleCRM(id, checked) {
-  const idx = tasks.findIndex(t=>t.id===id);
-  if (idx < 0) return;
-  tasks[idx].crm_done = checked;
-  saveTasks();
-  // Update card appearance without full re-render
-  const card = document.getElementById(`card-${id}`);
-  const bar  = document.getElementById(`crm-bar-${id}`);
-  const lbl  = document.getElementById(`crm-lbl-${id}`);
-  if (card && bar && lbl) {
-    if (checked) {
-      bar.classList.add('crm-done-bar');
-      lbl.textContent = 'Done Input CRM';
-      lbl.classList.add('crm-label','text-green-700');
-      lbl.classList.remove('text-sage-500');
-    } else {
-      bar.classList.remove('crm-done-bar');
-      lbl.textContent = 'Input CRM';
-      lbl.classList.remove('crm-label','text-green-700');
-      lbl.classList.add('text-sage-500');
-    }
+// ─── CRM ──────────────────────────────────────────────────────────────────────
+function toggleCRM(id,checked){
+  const idx=tasks.findIndex(t=>t.id===id);if(idx<0)return;
+  tasks[idx].crm_done=checked;saveTasks();
+  const bar=document.getElementById(`crm-bar-${id}`),lbl=document.getElementById(`crm-lbl-${id}`);
+  if(bar&&lbl){
+    if(checked){bar.classList.add('crm-done-bar');lbl.textContent='Done Input CRM';lbl.classList.add('text-green-700');lbl.classList.remove('text-sage-500');}
+    else{bar.classList.remove('crm-done-bar');lbl.textContent='Input CRM';lbl.classList.remove('text-green-700');lbl.classList.add('text-sage-500');}
   }
   updateSidebarStats();
-  toast(checked ? 'CRM marked as done' : 'CRM unmarked', 'info');
+  toast(checked?'CRM marked as done':'CRM unmarked','info');
 }
 
 // ─── TASKS ────────────────────────────────────────────────────────────────────
-function renderTasks() {
-  const q   = document.getElementById('task-search').value.toLowerCase();
-  const ds  = document.getElementById('filter-date-start').value;
-  const de  = document.getElementById('filter-date-end').value;
-
-  let filtered = tasks.filter(t=>{
-    const mq  = !q || t.customer.toLowerCase().includes(q) || t.description.toLowerCase().includes(q);
-    const mds = !ds || t.date_end>=ds;
-    const mde = !de || t.date_start<=de;
-    return mq&&mds&&mde;
+function renderTasks(){
+  const q=document.getElementById('task-search').value.toLowerCase();
+  const ds=document.getElementById('filter-date-start').value, de=document.getElementById('filter-date-end').value;
+  let filtered=tasks.filter(t=>{
+    return(!q||t.customer.toLowerCase().includes(q)||t.description.toLowerCase().includes(q))&&(!ds||t.date_end>=ds)&&(!de||t.date_start<=de);
   }).sort((a,b)=>b.created_at.localeCompare(a.created_at));
-
-  const list    = document.getElementById('task-list');
-  const empty   = document.getElementById('task-empty');
-  const countEl = document.getElementById('task-count');
-  const sub     = document.getElementById('tasks-subtitle');
-
-  countEl.textContent = `${filtered.length} task${filtered.length!==1?'s':''}`;
-  if(sub) sub.textContent = `${tasks.length} total · difilter ${filtered.length}`;
-
-  if (!filtered.length) {
-    list.innerHTML=''; empty.classList.remove('hidden'); empty.classList.add('flex'); return;
-  }
-  empty.classList.add('hidden'); empty.classList.remove('flex');
-
-  list.className = 'space-y-3 stagger';
-  list.innerHTML = filtered.map((t,i)=>{
-    const preview  = t.description.length>130 ? t.description.slice(0,130)+'…' : t.description;
-    const today    = new Date().toISOString().split('T')[0];
-    const isActive = t.date_start<=today && t.date_end>=today;
-    const isDone   = t.date_end<today;
-    const crmDone  = !!t.crm_done;
-
-    return `
-    <div id="card-${t.id}" class="task-card bg-white rounded-xl border border-sage-200 overflow-hidden ${stripeClass(i)}">
-      <!-- Main row -->
+  const list=document.getElementById('task-list'),empty=document.getElementById('task-empty');
+  document.getElementById('task-count').textContent=`${filtered.length} task${filtered.length!==1?'s':''}`;
+  const sub=document.getElementById('tasks-subtitle');if(sub)sub.textContent=`${tasks.length} total · difilter ${filtered.length}`;
+  if(!filtered.length){list.innerHTML='';empty.classList.remove('hidden');empty.classList.add('flex');return;}
+  empty.classList.add('hidden');empty.classList.remove('flex');
+  list.className='space-y-3 stagger';
+  list.innerHTML=filtered.map((t,i)=>{
+    const preview=t.description.length>130?t.description.slice(0,130)+'…':t.description;
+    const today=new Date().toISOString().split('T')[0];
+    const isActive=t.date_start<=today&&t.date_end>=today,isDone=t.date_end<today,crmDone=!!t.crm_done;
+    return`<div id="card-${t.id}" class="task-card bg-white rounded-xl border border-sage-200 overflow-hidden ${stripeClass(i)}">
       <div class="flex">
         <div class="flex-1 px-4 md:px-5 py-4">
           <div class="flex items-start justify-between gap-2">
@@ -544,13 +518,10 @@ function renderTasks() {
                 <p class="text-sage-500 text-[11px] font-medium mt-0.5">${fmtDate(t.date_start)} &rarr; ${fmtDate(t.date_end)}</p>
               </div>
             </div>
-            <div class="flex items-center gap-2 flex-shrink-0">
-              ${isActive ? '<span class="badge bg-forest-100 text-forest-700">● Aktif</span>' : isDone ? '<span class="badge bg-sage-100 text-sage-500">Selesai</span>' : '<span class="badge bg-amber-50 text-amber-600">Mendatang</span>'}
-            </div>
+            <div class="flex-shrink-0">${isActive?'<span class="badge bg-forest-100 text-forest-700">● Aktif</span>':isDone?'<span class="badge bg-sage-100 text-sage-500">Selesai</span>':'<span class="badge bg-amber-50 text-amber-600">Mendatang</span>'}</div>
           </div>
           <p class="text-sage-600 text-sm mt-2.5 leading-relaxed font-medium">${preview}</p>
         </div>
-        <!-- Action buttons -->
         <div class="flex flex-col justify-center gap-1.5 px-3 md:px-4 border-l border-sage-100">
           <button onclick="openTaskModal('${t.id}')" class="w-8 h-8 rounded-lg hover:bg-forest-100 text-sage-400 hover:text-forest-700 flex items-center justify-center transition-colors" title="Edit">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -560,177 +531,273 @@ function renderTasks() {
           </button>
         </div>
       </div>
-      <!-- CRM bar -->
-      <div id="crm-bar-${t.id}" class="flex items-center gap-3 px-4 md:px-5 py-2.5 border-t border-sage-100 ${crmDone?'crm-done-bar':'bg-sage-50/60'}">
+      <div id="crm-bar-${t.id}" class="flex items-center gap-3 px-4 md:px-5 py-2.5 border-t border-sage-100 ${crmDone?'crm-done-bar bg-green-50':'bg-sage-50/60'}">
         <label class="flex items-center gap-2.5 cursor-pointer select-none flex-1">
-          <input
-            type="checkbox"
-            class="crm-checkbox"
-            ${crmDone?'checked':''}
-            onchange="toggleCRM('${t.id}', this.checked)"
-          />
-          <span id="crm-lbl-${t.id}" class="text-xs font-bold ${crmDone?'text-green-700 crm-label':'text-sage-500'} uppercase tracking-widest">
-            ${crmDone?'Done Input CRM':'Input CRM'}
-          </span>
+          <input type="checkbox" class="crm-checkbox" ${crmDone?'checked':''} onchange="toggleCRM('${t.id}',this.checked)" />
+          <span id="crm-lbl-${t.id}" class="text-xs font-bold ${crmDone?'text-green-700':'text-sage-500'} uppercase tracking-widest">${crmDone?'Done Input CRM':'Input CRM'}</span>
         </label>
-        ${crmDone ? `<span class="text-[10px] font-semibold text-green-600 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Selesai</span>` : ''}
+        ${crmDone?`<span class="text-[10px] font-semibold text-green-600 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Selesai</span>`:''}
       </div>
     </div>`;
   }).join('');
-
   updateSidebarStats();
 }
-
-function clearDateFilter() {
-  document.getElementById('filter-date-start').value='';
-  document.getElementById('filter-date-end').value='';
-  renderTasks();
-}
-
-function openTaskModal(id=null) {
-  const sel = document.getElementById('task-customer');
-  sel.innerHTML = '<option value="">— Pilih Customer —</option>'+customers.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
-  if (id) {
-    const t=tasks.find(x=>x.id===id); if(!t) return;
+function clearDateFilter(){document.getElementById('filter-date-start').value='';document.getElementById('filter-date-end').value='';renderTasks();}
+function openTaskModal(id=null){
+  const sel=document.getElementById('task-customer');
+  sel.innerHTML='<option value="">— Pilih Customer —</option>'+customers.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+  if(id){const t=tasks.find(x=>x.id===id);if(!t)return;
     document.getElementById('task-modal-title').textContent='Edit Task';
-    document.getElementById('task-id').value         =t.id;
-    document.getElementById('task-customer').value   =t.customer;
-    document.getElementById('task-date-start').value =t.date_start;
-    document.getElementById('task-date-end').value   =t.date_end;
+    document.getElementById('task-id').value=t.id;document.getElementById('task-customer').value=t.customer;
+    document.getElementById('task-date-start').value=t.date_start;document.getElementById('task-date-end').value=t.date_end;
     document.getElementById('task-description').value=t.description;
-  } else {
-    document.getElementById('task-modal-title').textContent='New Task';
-    ['task-id','task-customer','task-date-start','task-date-end','task-description'].forEach(i=>document.getElementById(i).value='');
-  }
+  }else{document.getElementById('task-modal-title').textContent='New Task';['task-id','task-customer','task-date-start','task-date-end','task-description'].forEach(i=>document.getElementById(i).value='');}
   document.getElementById('task-modal').classList.remove('hidden');
 }
-function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
-
-function saveTask() {
-  const id          = document.getElementById('task-id').value;
-  const customer    = document.getElementById('task-customer').value.trim();
-  const date_start  = document.getElementById('task-date-start').value;
-  const date_end    = document.getElementById('task-date-end').value;
-  const description = document.getElementById('task-description').value.trim();
-
-  if (!customer)    { toast('Pilih customer terlebih dahulu','error'); return; }
-  if (!date_start)  { toast('Date start wajib diisi','error'); return; }
-  if (!date_end)    { toast('Date end wajib diisi','error'); return; }
-  if (!description) { toast('Deskripsi wajib diisi','error'); return; }
-  if (date_end<date_start) { toast('Date end tidak boleh sebelum date start','error'); return; }
-
-  if (id) {
-    const idx=tasks.findIndex(t=>t.id===id);
-    if(idx>-1) tasks[idx]={...tasks[idx],customer,date_start,date_end,description};
-    toast('Task berhasil diperbarui');
-  } else {
-    tasks.push({id:uid(),customer,date_start,date_end,description,crm_done:false,created_at:new Date().toISOString()});
-    toast('Task berhasil ditambahkan');
-  }
-  saveTasks(); closeTaskModal(); renderTasks();
+function closeTaskModal(){document.getElementById('task-modal').classList.add('hidden');}
+function saveTask(){
+  const id=document.getElementById('task-id').value,customer=document.getElementById('task-customer').value.trim();
+  const date_start=document.getElementById('task-date-start').value,date_end=document.getElementById('task-date-end').value;
+  const description=document.getElementById('task-description').value.trim();
+  if(!customer){toast('Pilih customer terlebih dahulu','error');return;}
+  if(!date_start){toast('Date start wajib diisi','error');return;}
+  if(!date_end){toast('Date end wajib diisi','error');return;}
+  if(!description){toast('Deskripsi wajib diisi','error');return;}
+  if(date_end<date_start){toast('Date end tidak boleh sebelum date start','error');return;}
+  if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>-1)tasks[idx]={...tasks[idx],customer,date_start,date_end,description};toast('Task berhasil diperbarui');}
+  else{tasks.push({id:uid(),customer,date_start,date_end,description,crm_done:false,created_at:new Date().toISOString()});toast('Task berhasil ditambahkan');}
+  saveTasks();closeTaskModal();renderTasks();
 }
-
-function deleteTask(id, name) {
-  showConfirm(`Hapus task "${name}"?`,'Data task ini akan dihapus permanen.',()=>{
-    tasks=tasks.filter(t=>t.id!==id); saveTasks(); renderTasks(); toast('Task dihapus');
-  });
-}
+function deleteTask(id,name){showConfirm(`Hapus task "${name}"?`,'Data task ini akan dihapus permanen.',()=>{tasks=tasks.filter(t=>t.id!==id);saveTasks();renderTasks();toast('Task dihapus');});}
 
 // ─── CUSTOMERS ────────────────────────────────────────────────────────────────
-function renderCustomers() {
-  const q = document.getElementById('cust-search').value.toLowerCase();
-  const filtered = customers.filter(c=>!q||c.name.toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)||(c.phone||'').toLowerCase().includes(q));
-  document.getElementById('cust-count').textContent = `${filtered.length} customer${filtered.length!==1?'s':''}`;
-  const sub = document.getElementById('customers-subtitle');
-  if(sub) sub.textContent=`${customers.length} total terdaftar`;
-  const body=document.getElementById('cust-table-body'), empty=document.getElementById('cust-empty');
+function renderCustomers(){
+  const q=document.getElementById('cust-search').value.toLowerCase();
+  const filtered=customers.filter(c=>!q||c.name.toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)||(c.phone||'').toLowerCase().includes(q));
+  document.getElementById('cust-count').textContent=`${filtered.length} customer${filtered.length!==1?'s':''}`;
+  const sub=document.getElementById('customers-subtitle');if(sub)sub.textContent=`${customers.length} total terdaftar`;
+  const body=document.getElementById('cust-table-body'),empty=document.getElementById('cust-empty');
   if(!filtered.length){body.innerHTML='';empty.classList.remove('hidden');return;}
   empty.classList.add('hidden');
-
   body.innerHTML=filtered.map((c,i)=>`
     <div class="cust-row px-4 md:px-5 py-3.5 border-b border-sage-100 last:border-0">
-      <!-- Mobile layout -->
       <div class="flex items-center justify-between md:hidden">
         <div class="flex items-center gap-3 min-w-0">
           <div class="w-9 h-9 rounded-lg ${avClass(i)} flex items-center justify-center text-white text-[11px] font-black flex-shrink-0">${initials(c.name)}</div>
-          <div class="min-w-0">
-            <p class="text-forest-800 font-bold text-sm truncate">${c.name}</p>
-            <p class="text-sage-500 text-xs truncate">${c.email||c.phone||'—'}</p>
-          </div>
+          <div class="min-w-0"><p class="text-forest-800 font-bold text-sm truncate">${c.name}</p><p class="text-sage-500 text-xs truncate">${c.email||c.phone||'—'}</p></div>
         </div>
         <div class="flex gap-1.5 flex-shrink-0">
-          <button onclick="openCustomerModal('${c.id}')" class="w-8 h-8 rounded-lg hover:bg-forest-100 text-sage-400 hover:text-forest-700 flex items-center justify-center transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button onclick="deleteCustomer('${c.id}','${c.name.replace(/'/g,"\\'")}') " class="w-8 h-8 rounded-lg hover:bg-red-50 text-sage-400 hover:text-red-500 flex items-center justify-center transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-          </button>
+          <button onclick="openCustomerModal('${c.id}')" class="w-8 h-8 rounded-lg hover:bg-forest-100 text-sage-400 hover:text-forest-700 flex items-center justify-center transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button onclick="deleteCustomer('${c.id}','${c.name.replace(/'/g,"\\'")}') " class="w-8 h-8 rounded-lg hover:bg-red-50 text-sage-400 hover:text-red-500 flex items-center justify-center transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
         </div>
       </div>
-      <!-- Desktop layout -->
       <div class="hidden md:grid grid-cols-12 items-center">
-        <div class="col-span-4 flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg ${avClass(i)} flex items-center justify-center text-white text-[11px] font-black flex-shrink-0">${initials(c.name)}</div>
-          <span class="text-forest-800 font-bold text-sm">${c.name}</span>
-        </div>
+        <div class="col-span-4 flex items-center gap-3"><div class="w-8 h-8 rounded-lg ${avClass(i)} flex items-center justify-center text-white text-[11px] font-black flex-shrink-0">${initials(c.name)}</div><span class="text-forest-800 font-bold text-sm">${c.name}</span></div>
         <div class="col-span-3 text-sage-600 text-sm font-medium">${c.email||'<span class="text-sage-300">—</span>'}</div>
         <div class="col-span-3 text-sage-600 text-sm font-medium">${c.phone||'<span class="text-sage-300">—</span>'}</div>
         <div class="col-span-2 flex justify-end gap-1.5">
-          <button onclick="openCustomerModal('${c.id}')" class="w-8 h-8 rounded-lg hover:bg-forest-100 text-sage-400 hover:text-forest-700 flex items-center justify-center transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button onclick="deleteCustomer('${c.id}','${c.name.replace(/'/g,"\\'")}') " class="w-8 h-8 rounded-lg hover:bg-red-50 text-sage-400 hover:text-red-500 flex items-center justify-center transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-          </button>
+          <button onclick="openCustomerModal('${c.id}')" class="w-8 h-8 rounded-lg hover:bg-forest-100 text-sage-400 hover:text-forest-700 flex items-center justify-center transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button onclick="deleteCustomer('${c.id}','${c.name.replace(/'/g,"\\'")}') " class="w-8 h-8 rounded-lg hover:bg-red-50 text-sage-400 hover:text-red-500 flex items-center justify-center transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
         </div>
       </div>
     </div>`).join('');
   updateSidebarStats();
 }
-
 function openCustomerModal(id=null){
   if(id){const c=customers.find(x=>x.id===id);if(!c)return;
     document.getElementById('cust-modal-title').textContent='Edit Customer';
-    document.getElementById('cust-id').value=c.id; document.getElementById('cust-name').value=c.name;
-    document.getElementById('cust-email').value=c.email||''; document.getElementById('cust-phone').value=c.phone||'';
-  }else{
-    document.getElementById('cust-modal-title').textContent='New Customer';
-    ['cust-id','cust-name','cust-email','cust-phone'].forEach(i=>document.getElementById(i).value='');
-  }
+    document.getElementById('cust-id').value=c.id;document.getElementById('cust-name').value=c.name;
+    document.getElementById('cust-email').value=c.email||'';document.getElementById('cust-phone').value=c.phone||'';
+  }else{document.getElementById('cust-modal-title').textContent='New Customer';['cust-id','cust-name','cust-email','cust-phone'].forEach(i=>document.getElementById(i).value='');}
   document.getElementById('cust-modal').classList.remove('hidden');
 }
-function closeCustomerModal(){ document.getElementById('cust-modal').classList.add('hidden'); }
-
+function closeCustomerModal(){document.getElementById('cust-modal').classList.add('hidden');}
 function saveCustomer(){
-  const id=document.getElementById('cust-id').value, name=document.getElementById('cust-name').value.trim();
-  const email=document.getElementById('cust-email').value.trim(), phone=document.getElementById('cust-phone').value.trim();
+  const id=document.getElementById('cust-id').value,name=document.getElementById('cust-name').value.trim();
+  const email=document.getElementById('cust-email').value.trim(),phone=document.getElementById('cust-phone').value.trim();
   if(!name){toast('Nama customer wajib diisi','error');return;}
   if(!id&&customers.find(c=>c.name.toLowerCase()===name.toLowerCase())){toast('Customer dengan nama ini sudah ada','error');return;}
   if(id){const idx=customers.findIndex(c=>c.id===id);if(idx>-1)customers[idx]={...customers[idx],name,email,phone};toast('Customer berhasil diperbarui');}
   else{customers.push({id:uid(),name,email,phone,created_at:new Date().toISOString()});toast('Customer berhasil ditambahkan');}
-  saveCustomers(); closeCustomerModal(); renderCustomers();
+  saveCustomers();closeCustomerModal();renderCustomers();
 }
-
 function deleteCustomer(id,name){
   const tc=tasks.filter(t=>t.customer===name).length;
-  showConfirm(`Hapus "${name}"?`,tc?`Customer ini terkait dengan ${tc} task. Data customer akan dihapus permanen.`:'Data customer ini akan dihapus permanen.',()=>{
-    customers=customers.filter(c=>c.id!==id);saveCustomers();renderCustomers();toast('Customer dihapus');
-  });
+  showConfirm(`Hapus "${name}"?`,tc?`Terkait ${tc} task. Data akan dihapus permanen.`:'Data customer akan dihapus permanen.',()=>{customers=customers.filter(c=>c.id!==id);saveCustomers();renderCustomers();toast('Customer dihapus');});
 }
 
-// ─── Export JSON ──────────────────────────────────────────────────────────────
+// ─── Export ───────────────────────────────────────────────────────────────────
 function exportJSON(type){
   const data=type==='tasks'?tasks:customers;
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob), a=document.createElement('a');
-  a.href=url; a.download=`${type}_${new Date().toISOString().split('T')[0]}.json`; a.click();
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=`${type}_${new Date().toISOString().split('T')[0]}.json`;a.click();
   URL.revokeObjectURL(url);
   toast(`${data.length} ${type==='tasks'?'task':'customer'} berhasil diekspor`);
 }
 
+// ─── IMPORT ───────────────────────────────────────────────────────────────────
+const impState = { customers: null, tasks: null };
+
+function resetImport() {
+  ['customers','tasks'].forEach(type => {
+    impState[type] = null;
+    const el = document.getElementById(`prev-${type}`);
+    el.innerHTML = ''; el.classList.add('hidden');
+  });
+}
+
+// Drag & drop
+function dzOver(e,t)  { e.preventDefault(); document.getElementById(`dz-${t}`).classList.add('drag-over'); }
+function dzLeave(e,t) { document.getElementById(`dz-${t}`).classList.remove('drag-over'); }
+function dzDrop(e,t)  { e.preventDefault(); document.getElementById(`dz-${t}`).classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) readFile(f,t); }
+function handleFile(input,t){ if(input.files[0]) readFile(input.files[0],t); input.value=''; }
+
+function readFile(file, type) {
+  if (!file.name.endsWith('.json')) { toast('Hanya file .json yang didukung','error'); return; }
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) { toast('Format tidak valid: harus berupa array JSON','error'); return; }
+      impState[type] = data;
+      showPreview(type, data);
+    } catch { toast('File tidak bisa dibaca: JSON tidak valid','error'); }
+  };
+  r.readAsText(file);
+}
+
+function showPreview(type, data) {
+  const el = document.getElementById(`prev-${type}`);
+  el.classList.remove('hidden');
+
+  if (type === 'customers') {
+    const existNames = new Set(customers.map(c=>c.name.toLowerCase()));
+    let nNew=0, nDup=0, nErr=0;
+    const rows = data.map((item,i) => {
+      if (!item.name || typeof item.name !== 'string') {
+        nErr++;
+        return `<div class="prev-err flex items-center justify-between px-3 py-2 rounded-lg mb-1 text-xs">
+          <span class="text-red-500 font-bold w-6">${i+1}</span>
+          <span class="flex-1 text-red-600 font-medium">⚠ Field "name" tidak ada atau tidak valid</span>
+          <span class="badge bg-red-100 text-red-600">Error</span>
+        </div>`;
+      }
+      const dup = existNames.has(item.name.toLowerCase());
+      dup ? nDup++ : nNew++;
+      return `<div class="${dup?'prev-dup':'prev-new'} flex items-center gap-2 px-3 py-2 rounded-lg mb-1 text-xs">
+        <span class="text-sage-400 font-bold w-6 flex-shrink-0">${i+1}</span>
+        <span class="flex-1 font-semibold text-forest-800 truncate">${item.name}</span>
+        <span class="text-sage-400 truncate hidden sm:block w-36">${item.email||'—'}</span>
+        <span class="badge ${dup?'bg-amber-100 text-amber-700':'bg-green-100 text-green-700'} flex-shrink-0">${dup?'Duplikat':'Baru'}</span>
+      </div>`;
+    });
+
+    el.innerHTML = `
+      <div class="border border-sage-200 rounded-xl overflow-hidden">
+        <div class="bg-sage-50 px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sage-100">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-black text-forest-800">${data.length} data ditemukan</span>
+            <span class="badge bg-green-100 text-green-700">${nNew} baru</span>
+            ${nDup?`<span class="badge bg-amber-100 text-amber-700">${nDup} duplikat</span>`:''}
+            ${nErr?`<span class="badge bg-red-100 text-red-600">${nErr} error</span>`:''}
+          </div>
+          <div class="flex gap-2">
+            <button onclick="cancelImport('customers')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-sage-600 bg-sage-100 hover:bg-sage-200 transition-colors">Batal</button>
+            <button onclick="doImport('customers')" ${nNew===0?'disabled':''} class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-forest-600 hover:bg-forest-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              ✓ Import ${nNew} Data Baru
+            </button>
+          </div>
+        </div>
+        <div class="max-h-52 overflow-y-auto p-2">${rows.join('')}</div>
+        <div class="px-4 py-2.5 bg-sage-50/50 border-t border-sage-100">
+          <p class="text-[11px] text-sage-400 font-medium">ℹ Duplikat (nama sama) dan error tidak akan diimport. Data lama tidak tertimpa.</p>
+        </div>
+      </div>`;
+
+  } else {
+    const existIds = new Set(tasks.map(t=>t.id));
+    let nNew=0, nDup=0, nErr=0;
+    const rows = data.map((item,i) => {
+      if (!item.customer || !item.date_start || !item.date_end) {
+        nErr++;
+        return `<div class="prev-err flex items-center justify-between px-3 py-2 rounded-lg mb-1 text-xs">
+          <span class="text-red-500 font-bold w-6">${i+1}</span>
+          <span class="flex-1 text-red-600 font-medium">⚠ Field wajib tidak lengkap (customer / date_start / date_end)</span>
+          <span class="badge bg-red-100 text-red-600">Error</span>
+        </div>`;
+      }
+      const dup = item.id && existIds.has(item.id);
+      dup ? nDup++ : nNew++;
+      return `<div class="${dup?'prev-dup':'prev-new'} flex items-center gap-2 px-3 py-2 rounded-lg mb-1 text-xs">
+        <span class="text-sage-400 font-bold w-6 flex-shrink-0">${i+1}</span>
+        <span class="flex-1 font-semibold text-forest-800 truncate">${item.customer}</span>
+        <span class="text-sage-400 hidden sm:block flex-shrink-0">${item.date_start} → ${item.date_end}</span>
+        <span class="badge ${dup?'bg-amber-100 text-amber-700':'bg-green-100 text-green-700'} flex-shrink-0">${dup?'Duplikat':'Baru'}</span>
+      </div>`;
+    });
+
+    el.innerHTML = `
+      <div class="border border-sage-200 rounded-xl overflow-hidden">
+        <div class="bg-sage-50 px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-sage-100">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-black text-forest-800">${data.length} data ditemukan</span>
+            <span class="badge bg-green-100 text-green-700">${nNew} baru</span>
+            ${nDup?`<span class="badge bg-amber-100 text-amber-700">${nDup} duplikat</span>`:''}
+            ${nErr?`<span class="badge bg-red-100 text-red-600">${nErr} error</span>`:''}
+          </div>
+          <div class="flex gap-2">
+            <button onclick="cancelImport('tasks')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-sage-600 bg-sage-100 hover:bg-sage-200 transition-colors">Batal</button>
+            <button onclick="doImport('tasks')" ${nNew===0?'disabled':''} class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-forest-600 hover:bg-forest-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              ✓ Import ${nNew} Data Baru
+            </button>
+          </div>
+        </div>
+        <div class="max-h-52 overflow-y-auto p-2">${rows.join('')}</div>
+        <div class="px-4 py-2.5 bg-sage-50/50 border-t border-sage-100">
+          <p class="text-[11px] text-sage-400 font-medium">ℹ Data dengan ID yang sama tidak akan diimport ulang.</p>
+        </div>
+      </div>`;
+  }
+}
+
+function doImport(type) {
+  const data = impState[type]; if (!data) return;
+  if (type === 'customers') {
+    const existNames = new Set(customers.map(c=>c.name.toLowerCase()));
+    let added = 0;
+    data.forEach(item => {
+      if (!item.name || existNames.has(item.name.toLowerCase())) return;
+      customers.push({ id:uid(), name:item.name, email:item.email||'', phone:item.phone||'', created_at:item.created_at||new Date().toISOString() });
+      added++;
+    });
+    saveCustomers();
+    toast(`${added} customer berhasil diimport`);
+  } else {
+    const existIds = new Set(tasks.map(t=>t.id));
+    let added = 0;
+    data.forEach(item => {
+      if (!item.customer||!item.date_start||!item.date_end) return;
+      if (item.id && existIds.has(item.id)) return;
+      tasks.push({ id:item.id||uid(), customer:item.customer, date_start:item.date_start, date_end:item.date_end, description:item.description||'', crm_done:!!item.crm_done, created_at:item.created_at||new Date().toISOString() });
+      added++;
+    });
+    saveTasks();
+    toast(`${added} task berhasil diimport`);
+  }
+  cancelImport(type);
+  updateSidebarStats();
+}
+
+function cancelImport(type) {
+  impState[type] = null;
+  const el = document.getElementById(`prev-${type}`);
+  el.innerHTML = ''; el.classList.add('hidden');
+}
+
 // ─── Keyboard ─────────────────────────────────────────────────────────────────
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){ closeTaskModal(); closeCustomerModal(); closeConfirm(); closeSidebar(); }
+  if(e.key==='Escape'){closeTaskModal();closeCustomerModal();closeConfirm();closeSidebar();}
 });
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
